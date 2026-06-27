@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZV-Doc 360</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://accounts.google.com/gsi/client" async defer onload="onGoogleReady()"></script>
   <style>
     :root {
       --bg: #0f172a; --sidebar: #111827; --card: #1e293b; --card-hover: #273549;
@@ -426,7 +426,7 @@ function renderLogin(app) {
         <button class="btn-mock" onclick="mockLogin()">🧪 Modo prueba (sin Google)</button>
       </div>
     </div>`;
-  if (isRealId) {
+  if (isRealId && googleReady) {
     google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleLogin });
     google.accounts.id.renderButton(document.getElementById("googleBtn"), { theme:"filled_blue", size:"large", width:280 });
   }
@@ -454,6 +454,12 @@ function setPage(p) { page = p; render(); }
 function parseJwt(token) {
   const b64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
   return JSON.parse(atob(b64));
+}
+
+let googleReady = false;
+function onGoogleReady() {
+  googleReady = true;
+  if (!user) render();
 }
 
 render();
