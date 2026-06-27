@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZV-Doc 360</title>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+
+    .login {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #111827;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar button {
+      padding: 10px;
+      border: none;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 8px;
+    }
+
+    .sidebar button:hover {
+      background: #374151;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #1f2937;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      padding: 10px;
+      background: #2563eb;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .logout {
+      background: #ef4444;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<script>
+let user = null;
+let page = "dashboard";
+
+function render() {
+  const app = document.getElementById("app");
+
+  if (!user) {
+    app.innerHTML = `
+      <div class="login">
+        <h1>ZV-Doc 360</h1>
+        <p>Accede con tu cuenta de Google</p>
+        <div id="googleBtn"></div>
+      </div>
+    `;
+
+    google.accounts.id.initialize({
+      client_id: "https://console.cloud.google.com/welcome/new?project=zv-doc-360",
+      callback: handleLogin
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "filled_blue", size: "large" }
+    );
+
+    return;
+  }
+
+  app.innerHTML = `
+    <div class="app">
+      
+      <div class="sidebar">
+        <h3>ZV-Doc 360</h3>
+
+        <button onclick="setPage('dashboard')">🏠 Dashboard</button>
+        <button onclick="setPage('personas')">👥 Personas</button>
+        <button onclick="setPage('documentos')">📂 Documentos</button>
+        <button onclick="setPage('informes')">📑 Informes</button>
+        <button onclick="setPage('buscar')">🔎 Buscar</button>
+        <button onclick="setPage('ia')">🤖 IA</button>
+        <button onclick="logout()" class="logout">Salir</button>
+      </div>
+
+      <div class="content">
+
+        <div class="topbar">
+          <div>👤 ${user.name}</div>
+        </div>
+
+        ${renderPage()}
+
+      </div>
+
+    </div>
+  `;
+}
+
+function renderPage() {
+  switch(page) {
+    case "dashboard":
+      return `
+        <h2>Dashboard</h2>
+
+        <div class="card">📄 Documentos: 184</div>
+        <div class="card">👥 Personas: 8</div>
+        <div class="card">🆕 Últimos: 3 nuevos documentos</div>
+        <div class="card">⏰ Próximo vencimiento: Seguro coche</div>
+      `;
+
+    case "personas":
+      return `<h2>Personas</h2><div class="card">Listado familiar aquí</div>`;
+
+    case "documentos":
+      return `<h2>Documentos</h2><div class="card">Google Drive conectado (próximo paso)</div>`;
+
+    case "informes":
+      return `<h2>Informes</h2><div class="card">Generación de PDFs (próximo paso)</div>`;
+
+    case "buscar":
+      return `<h2>Buscar</h2><div class="card">Buscador inteligente (próximo paso)</div>`;
+
+    case "ia":
+      return `<h2>IA</h2><div class="card">Asistente ZV-Doc 360 (próximo paso)</div>`;
+  }
+}
+
+function setPage(p) {
+  page = p;
+  render();
+}
+
+function handleLogin(response) {
+  const payload = parseJwt(response.credential);
+
+  user = {
+    name: payload.name,
+    email: payload.email,
+    picture: payload.picture
+  };
+
+  render();
+}
+
+function logout() {
+  user = null;
+  render();
+}
+
+function parseJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(atob(base64));
+}
+
+render();
+</script>
+
+</body>
+</html>
