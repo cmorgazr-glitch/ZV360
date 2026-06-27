@@ -545,7 +545,17 @@ async function sendChat() {
       body: JSON.stringify({
         message: msg,
         context: driveState.stack.length ? driveState.stack[driveState.stack.length-1].name : "COMPARTIDA",
-        files: driveState.items.map(f => f.name).slice(0, 20).join(", ")
+        // Lista legible para el prompt (nombres, igual que antes)
+        files: driveState.items.map(f => f.name).slice(0, 20).join(", "),
+        // Lista estructurada con id y mimeType para que el agente pueda
+        // descargar/leer el contenido real de un archivo concreto via la
+        // herramienta de Google Drive conectada en n8n.
+        filesDetailed: driveState.items.slice(0, 20).map(f => ({
+          id: f.id,
+          name: f.name,
+          mimeType: f.mimeType,
+          webViewLink: f.webViewLink || null
+        }))
       })
     });
 
