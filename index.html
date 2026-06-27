@@ -1,211 +1,462 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZV-Doc 360</title>
-
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+    :root {
+      --bg: #0f172a; --sidebar: #111827; --card: #1e293b; --card-hover: #273549;
+      --accent: #3b82f6; --danger: #ef4444; --text: #f1f5f9; --muted: #94a3b8;
+      --success: #22c55e; --warning: #f59e0b;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-    .login {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
+    /* LOGIN */
+    .login-screen { height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 60% 40%,#1e3a5f 0%,#0f172a 70%); }
+    .login-box { background:var(--card); border:1px solid #334155; border-radius:16px; padding:48px 40px; text-align:center; width:360px; box-shadow:0 25px 60px rgba(0,0,0,.5); }
+    .login-logo { font-size:2.4rem; font-weight:800; letter-spacing:-1px; margin-bottom:6px; }
+    .login-logo span { color:var(--accent); }
+    .login-subtitle { color:var(--muted); font-size:.85rem; margin-bottom:32px; }
+    .divider { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:.75rem; margin:20px 0; }
+    .divider::before,.divider::after { content:''; flex:1; height:1px; background:#334155; }
+    .btn-mock { width:100%; padding:10px; background:#1e293b; border:1px dashed #475569; color:var(--muted); border-radius:8px; cursor:pointer; font-size:.8rem; transition:all .2s; }
+    .btn-mock:hover { background:#273549; color:var(--text); border-color:var(--accent); }
 
-    .app {
-      display: flex;
-      height: 100vh;
-    }
+    /* APP */
+    .app { display:flex; height:100vh; }
+    .sidebar { width:220px; background:var(--sidebar); border-right:1px solid #1e293b; display:flex; flex-direction:column; padding:20px 12px; gap:4px; }
+    .sidebar-logo { font-size:1rem; font-weight:700; padding:0 8px 16px; border-bottom:1px solid #1e293b; margin-bottom:8px; }
+    .sidebar-logo span { color:var(--accent); }
+    .nav-btn { display:flex; align-items:center; gap:10px; padding:9px 10px; border:none; background:transparent; color:var(--muted); cursor:pointer; border-radius:8px; font-size:.85rem; text-align:left; transition:all .15s; width:100%; }
+    .nav-btn:hover { background:var(--card); color:var(--text); }
+    .nav-btn.active { background:#1e3a5f; color:#93c5fd; font-weight:600; }
+    .sidebar-spacer { flex:1; }
+    .user-pill { display:flex; align-items:center; gap:8px; padding:8px 10px; font-size:.78rem; color:var(--muted); }
+    .user-avatar { width:28px; height:28px; border-radius:50%; background:#1e3a5f; display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:#93c5fd; flex-shrink:0; overflow:hidden; }
+    .user-avatar img { width:100%; height:100%; object-fit:cover; }
+    .btn-logout { width:100%; padding:8px 10px; background:transparent; border:1px solid #334155; color:var(--danger); border-radius:8px; cursor:pointer; font-size:.8rem; margin-top:6px; transition:all .15s; }
+    .btn-logout:hover { background:#450a0a; border-color:var(--danger); }
+    .content { flex:1; overflow-y:auto; padding:28px 32px; }
+    .page-header { margin-bottom:24px; }
+    .page-header h2 { font-size:1.4rem; font-weight:700; letter-spacing:-.4px; }
+    .page-header p { color:var(--muted); font-size:.83rem; margin-top:2px; }
+    .card { background:var(--card); border:1px solid #1e293b; border-radius:12px; padding:18px 20px; margin-bottom:12px; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+    .stat-card { background:var(--card); border:1px solid #1e293b; border-radius:12px; padding:18px 20px; }
+    .stat-card .stat-icon { font-size:1.4rem; margin-bottom:8px; }
+    .stat-card .stat-value { font-size:1.6rem; font-weight:700; }
+    .stat-card .stat-label { color:var(--muted); font-size:.78rem; margin-top:2px; }
+    .placeholder { text-align:center; padding:60px 20px; color:var(--muted); }
+    .placeholder .ph-icon { font-size:2.5rem; margin-bottom:12px; }
+    .placeholder h3 { color:var(--text); margin-bottom:6px; font-size:1rem; }
+    .badge { display:inline-block; padding:2px 8px; border-radius:100px; font-size:.7rem; font-weight:600; }
+    .badge-blue { background:#1e3a5f; color:#93c5fd; }
+    .badge-green { background:#052e16; color:#86efac; }
+    .badge-yellow { background:#431407; color:#fcd34d; }
 
-    .sidebar {
-      width: 240px;
-      background: #111827;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    /* DRIVE */
+    .drive-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+    .drive-toolbar input { flex:1; min-width:180px; padding:8px 12px; background:#1e293b; border:1px solid #334155; border-radius:8px; color:var(--text); font-size:.85rem; outline:none; }
+    .drive-toolbar input:focus { border-color:var(--accent); }
+    .btn-primary { padding:8px 16px; background:var(--accent); border:none; color:white; border-radius:8px; cursor:pointer; font-size:.83rem; white-space:nowrap; }
+    .btn-primary:hover { background:#2563eb; }
+    .btn-secondary { padding:8px 14px; background:#1e293b; border:1px solid #334155; color:var(--muted); border-radius:8px; cursor:pointer; font-size:.83rem; }
+    .btn-secondary:hover { background:#273549; color:var(--text); }
 
-    .sidebar button {
-      padding: 10px;
-      border: none;
-      background: #1f2937;
-      color: white;
-      cursor: pointer;
-      text-align: left;
-      border-radius: 8px;
-    }
+    .breadcrumb { display:flex; align-items:center; gap:6px; font-size:.8rem; color:var(--muted); margin-bottom:14px; flex-wrap:wrap; }
+    .breadcrumb span { cursor:pointer; }
+    .breadcrumb span:hover { color:var(--accent); }
+    .breadcrumb .sep { color:#334155; }
 
-    .sidebar button:hover {
-      background: #374151;
-    }
+    .drive-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+    .drive-item { background:var(--card); border:1px solid #1e293b; border-radius:10px; padding:14px; cursor:pointer; transition:all .15s; display:flex; flex-direction:column; gap:6px; }
+    .drive-item:hover { border-color:var(--accent); background:#1a2f4a; }
+    .drive-item .di-icon { font-size:1.8rem; }
+    .drive-item .di-name { font-size:.78rem; font-weight:600; word-break:break-word; line-height:1.3; }
+    .drive-item .di-meta { font-size:.68rem; color:var(--muted); }
+    .drive-item .di-actions { display:flex; gap:6px; margin-top:4px; }
+    .di-btn { font-size:.68rem; padding:3px 8px; border-radius:6px; border:none; cursor:pointer; }
+    .di-btn-open { background:#1e3a5f; color:#93c5fd; }
+    .di-btn-open:hover { background:#1e4a7a; }
 
-    .content {
-      flex: 1;
-      padding: 20px;
-    }
+    .drive-list { display:flex; flex-direction:column; gap:6px; }
+    .drive-list-item { background:var(--card); border:1px solid #1e293b; border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .15s; }
+    .drive-list-item:hover { border-color:var(--accent); }
+    .drive-list-item .dli-icon { font-size:1.2rem; flex-shrink:0; }
+    .drive-list-item .dli-info { flex:1; min-width:0; }
+    .drive-list-item .dli-name { font-size:.83rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .drive-list-item .dli-meta { font-size:.7rem; color:var(--muted); }
+    .drive-list-item .dli-open { font-size:.72rem; padding:4px 10px; background:#1e3a5f; color:#93c5fd; border:none; border-radius:6px; cursor:pointer; flex-shrink:0; }
+    .drive-list-item .dli-open:hover { background:#1e4a7a; }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      background: #1f2937;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      padding: 10px;
-      background: #2563eb;
-      border: none;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .logout {
-      background: #ef4444;
-    }
+    .drive-loading { text-align:center; padding:40px; color:var(--muted); font-size:.85rem; }
+    .drive-error { background:#450a0a; border:1px solid #ef4444; border-radius:8px; padding:14px 16px; color:#fca5a5; font-size:.83rem; margin-bottom:12px; }
+    .view-toggle { display:flex; gap:4px; }
+    .view-toggle button { padding:6px 10px; border:1px solid #334155; background:transparent; color:var(--muted); border-radius:6px; cursor:pointer; font-size:.8rem; }
+    .view-toggle button.active { background:#1e3a5f; color:#93c5fd; border-color:#1e3a5f; }
   </style>
 </head>
-
 <body>
-
 <div id="app"></div>
 
 <script>
+const GOOGLE_CLIENT_ID = "378492890211-hi5oqlbom6ukp0en164fr662uoj48o72.apps.googleusercontent.com";
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.readonly";
+const FOLDER_ROOT_NAME = "COMPARTIDA";
+
 let user = null;
+let driveToken = null;
 let page = "dashboard";
 
+// ── Drive state ──
+let driveState = {
+  loading: false,
+  error: null,
+  rootId: null,
+  stack: [],        // [{id, name}] breadcrumb
+  items: [],
+  filter: "",
+  view: "list"      // "grid" | "list"
+};
+
+const NAV = [
+  { id:"dashboard",  icon:"🏠", label:"Dashboard" },
+  { id:"personas",   icon:"👥", label:"Personas"  },
+  { id:"documentos", icon:"📂", label:"Documentos"},
+  { id:"informes",   icon:"📑", label:"Informes"  },
+  { id:"buscar",     icon:"🔎", label:"Buscar"    },
+  { id:"ia",         icon:"🤖", label:"Asistente IA"},
+];
+
+// ─────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────
 function render() {
   const app = document.getElementById("app");
+  if (!user) { renderLogin(app); return; }
 
-  if (!user) {
-    app.innerHTML = `
-      <div class="login">
-        <h1>ZV-Doc 360</h1>
-        <p>Accede con tu cuenta de Google</p>
-        <div id="googleBtn"></div>
-      </div>
-    `;
-
-    google.accounts.id.initialize({
-      client_id: "https://console.cloud.google.com/welcome/new?project=zv-doc-360",
-      callback: handleLogin
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById("googleBtn"),
-      { theme: "filled_blue", size: "large" }
-    );
-
-    return;
-  }
-
+  const initials = user.name.split(" ").map(n=>n[0]).join("").slice(0,2).toUpperCase();
   app.innerHTML = `
     <div class="app">
-      
       <div class="sidebar">
-        <h3>ZV-Doc 360</h3>
-
-        <button onclick="setPage('dashboard')">🏠 Dashboard</button>
-        <button onclick="setPage('personas')">👥 Personas</button>
-        <button onclick="setPage('documentos')">📂 Documentos</button>
-        <button onclick="setPage('informes')">📑 Informes</button>
-        <button onclick="setPage('buscar')">🔎 Buscar</button>
-        <button onclick="setPage('ia')">🤖 IA</button>
-        <button onclick="logout()" class="logout">Salir</button>
-      </div>
-
-      <div class="content">
-
-        <div class="topbar">
-          <div>👤 ${user.name}</div>
+        <div class="sidebar-logo">ZV-Doc <span>360</span></div>
+        ${NAV.map(n=>`
+          <button class="nav-btn ${page===n.id?'active':''}" onclick="setPage('${n.id}')">
+            ${n.icon} ${n.label}
+          </button>`).join("")}
+        <div class="sidebar-spacer"></div>
+        <div class="user-pill">
+          <div class="user-avatar">
+            ${user.picture?`<img src="${user.picture}" alt="${initials}">`:`${initials}`}
+          </div>
+          <div>
+            <div style="color:var(--text);font-weight:600">${user.name.split(" ")[0]}</div>
+            <div style="font-size:.7rem">${user.email||"modo prueba"}</div>
+          </div>
         </div>
-
-        ${renderPage()}
-
+        <button class="btn-logout" onclick="logout()">← Salir</button>
       </div>
-
-    </div>
-  `;
+      <div class="content" id="main-content">
+        ${renderPage()}
+      </div>
+    </div>`;
 }
 
 function renderPage() {
   switch(page) {
-    case "dashboard":
-      return `
-        <h2>Dashboard</h2>
-
-        <div class="card">📄 Documentos: 184</div>
-        <div class="card">👥 Personas: 8</div>
-        <div class="card">🆕 Últimos: 3 nuevos documentos</div>
-        <div class="card">⏰ Próximo vencimiento: Seguro coche</div>
-      `;
-
-    case "personas":
-      return `<h2>Personas</h2><div class="card">Listado familiar aquí</div>`;
-
-    case "documentos":
-      return `<h2>Documentos</h2><div class="card">Google Drive conectado (próximo paso)</div>`;
-
-    case "informes":
-      return `<h2>Informes</h2><div class="card">Generación de PDFs (próximo paso)</div>`;
-
-    case "buscar":
-      return `<h2>Buscar</h2><div class="card">Buscador inteligente (próximo paso)</div>`;
-
-    case "ia":
-      return `<h2>IA</h2><div class="card">Asistente ZV-Doc 360 (próximo paso)</div>`;
+    case "dashboard":  return renderDashboard();
+    case "documentos": return renderDocumentos();
+    case "personas":   return `<div class="page-header"><h2>Personas</h2><p>Miembros del núcleo familiar</p></div><div class="placeholder"><div class="ph-icon">👥</div><h3>Próximo paso</h3><p>Se cargará desde Google Sheets · hoja <strong>Contactos</strong></p></div>`;
+    case "informes":   return `<div class="page-header"><h2>Informes</h2><p>Generación de resúmenes y PDFs</p></div><div class="placeholder"><div class="ph-icon">📑</div><h3>Próximo paso</h3><p>Exportar fichas por persona y vencimientos</p></div>`;
+    case "buscar":     return `<div class="page-header"><h2>Buscar</h2><p>Búsqueda inteligente</p></div><div class="placeholder"><div class="ph-icon">🔎</div><h3>Próximo paso</h3><p>Búsqueda cross-sección con filtros</p></div>`;
+    case "ia":         return `<div class="page-header"><h2>Asistente IA</h2><p>Consultas sobre tu documentación</p></div><div class="placeholder"><div class="ph-icon">🤖</div><h3>Próximo paso</h3><p>Chat con Claude integrado</p></div>`;
   }
 }
 
-function setPage(p) {
-  page = p;
-  render();
+// ─────────────────────────────────────────
+//  DASHBOARD
+// ─────────────────────────────────────────
+function renderDashboard() {
+  return `
+    <div class="page-header"><h2>Dashboard</h2><p>Resumen de la documentación familiar</p></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value">184</div><div class="stat-label">Documentos totales</div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value">8</div><div class="stat-label">Personas</div></div>
+      <div class="stat-card"><div class="stat-icon">🆕</div><div class="stat-value">3</div><div class="stat-label">Nuevos este mes</div></div>
+      <div class="stat-card"><div class="stat-icon">⏰</div><div class="stat-value">12d</div><div class="stat-label">Próximo vencimiento</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <strong>Próximos vencimientos</strong><span class="badge badge-yellow">⏰ Atención</span>
+      </div>
+      <div style="color:var(--muted);font-size:.85rem;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between"><span>🚗 Seguro coche</span><span style="color:var(--warning)">12 jul 2025</span></div>
+        <div style="display:flex;justify-content:space-between"><span>🏠 IBI vivienda</span><span>30 ago 2025</span></div>
+        <div style="display:flex;justify-content:space-between"><span>📋 Revisión médica anual</span><span>15 sep 2025</span></div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────
+//  DOCUMENTOS — Drive
+// ─────────────────────────────────────────
+function renderDocumentos() {
+  const ds = driveState;
+  const currentFolder = ds.stack.length ? ds.stack[ds.stack.length-1] : {name: FOLDER_ROOT_NAME};
+
+  // Breadcrumb
+  const crumb = `
+    <div class="breadcrumb">
+      <span onclick="driveGoRoot()">📂 ${FOLDER_ROOT_NAME}</span>
+      ${ds.stack.slice(1).map((f,i)=>`
+        <span class="sep">›</span>
+        <span onclick="driveGoCrumb(${i+1})">${f.name}</span>`).join("")}
+    </div>`;
+
+  // Toolbar
+  const toolbar = `
+    <div class="drive-toolbar">
+      <input type="text" placeholder="Filtrar archivos..." value="${ds.filter}"
+             oninput="driveFilter(this.value)" id="drive-search"/>
+      ${!driveToken
+        ? `<button class="btn-primary" onclick="requestDriveAccess()">🔗 Conectar Google Drive</button>`
+        : `<button class="btn-secondary" onclick="driveRefresh()">↻ Actualizar</button>`}
+      <div class="view-toggle">
+        <button class="${ds.view==='list'?'active':''}" onclick="driveSetView('list')">☰</button>
+        <button class="${ds.view==='grid'?'active':''}" onclick="driveSetView('grid')">⊞</button>
+      </div>
+    </div>`;
+
+  // Contenido
+  let content = "";
+  if (!driveToken) {
+    content = `<div class="placeholder">
+      <div class="ph-icon">📂</div>
+      <h3>Conecta Google Drive</h3>
+      <p>Haz clic en "Conectar Google Drive" para acceder a la carpeta <strong>COMPARTIDA</strong></p>
+    </div>`;
+  } else if (ds.loading) {
+    content = `<div class="drive-loading">⏳ Cargando archivos...</div>`;
+  } else if (ds.error) {
+    content = `<div class="drive-error">❌ ${ds.error}<br><br><button class="btn-secondary" onclick="driveRefresh()">Reintentar</button></div>`;
+  } else {
+    const filtered = ds.items.filter(f => f.name.toLowerCase().includes(ds.filter.toLowerCase()));
+    if (!filtered.length) {
+      content = `<div class="placeholder"><div class="ph-icon">🗂️</div><h3>Sin resultados</h3><p>${ds.filter ? "Prueba con otro término" : "Esta carpeta está vacía"}</p></div>`;
+    } else if (ds.view === "grid") {
+      content = `<div class="drive-grid">${filtered.map(f=>driveItemGrid(f)).join("")}</div>`;
+    } else {
+      content = `<div class="drive-list">${filtered.map(f=>driveItemList(f)).join("")}</div>`;
+    }
+  }
+
+  return `
+    <div class="page-header">
+      <h2>Documentos</h2>
+      <p>Carpeta <strong>COMPARTIDA</strong> en Google Drive</p>
+    </div>
+    ${toolbar}
+    ${driveToken ? crumb : ""}
+    ${content}`;
+}
+
+function driveIcon(mimeType, name) {
+  if (mimeType === "application/vnd.google-apps.folder") return "📁";
+  if (mimeType === "application/pdf") return "📄";
+  if (mimeType?.includes("image")) return "🖼️";
+  if (mimeType?.includes("spreadsheet") || name?.endsWith(".xlsx") || name?.endsWith(".csv")) return "📊";
+  if (mimeType?.includes("document") || name?.endsWith(".docx")) return "📝";
+  if (mimeType?.includes("presentation") || name?.endsWith(".pptx")) return "📑";
+  return "📎";
+}
+
+function driveItemGrid(f) {
+  const icon = driveIcon(f.mimeType, f.name);
+  const isFolder = f.mimeType === "application/vnd.google-apps.folder";
+  return `<div class="drive-item" onclick="${isFolder ? `driveOpenFolder('${f.id}','${f.name.replace(/'/g,"\\'")}')` : `driveOpenFile('${f.id}','${f.mimeType}')`}">
+    <div class="di-icon">${icon}</div>
+    <div class="di-name">${f.name}</div>
+    <div class="di-meta">${isFolder ? "Carpeta" : (f.size ? formatSize(f.size) : "")}</div>
+    ${!isFolder ? `<div class="di-actions"><button class="di-btn di-btn-open" onclick="event.stopPropagation();driveOpenFile('${f.id}','${f.mimeType}')">Abrir ↗</button></div>` : ""}
+  </div>`;
+}
+
+function driveItemList(f) {
+  const icon = driveIcon(f.mimeType, f.name);
+  const isFolder = f.mimeType === "application/vnd.google-apps.folder";
+  const date = f.modifiedTime ? new Date(f.modifiedTime).toLocaleDateString("es-ES") : "";
+  return `<div class="drive-list-item" onclick="${isFolder ? `driveOpenFolder('${f.id}','${f.name.replace(/'/g,"\\'")}')` : `driveOpenFile('${f.id}','${f.mimeType}')`}">
+    <div class="dli-icon">${icon}</div>
+    <div class="dli-info">
+      <div class="dli-name">${f.name}</div>
+      <div class="dli-meta">${isFolder ? "Carpeta" : ""}${date ? " · "+date : ""}${f.size ? " · "+formatSize(f.size) : ""}</div>
+    </div>
+    ${!isFolder ? `<button class="dli-open" onclick="event.stopPropagation();driveOpenFile('${f.id}','${f.mimeType}')">Abrir ↗</button>` : ""}
+  </div>`;
+}
+
+// ─────────────────────────────────────────
+//  DRIVE API
+// ─────────────────────────────────────────
+function requestDriveAccess() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: DRIVE_SCOPE,
+    callback: async (resp) => {
+      if (resp.error) { alert("Error al conectar Drive: " + resp.error); return; }
+      driveToken = resp.access_token;
+      await driveFindRoot();
+    }
+  });
+  client.requestAccessToken();
+}
+
+async function driveFetch(url) {
+  const r = await fetch(url, { headers: { Authorization: "Bearer " + driveToken } });
+  if (!r.ok) throw new Error(`Error ${r.status}: ${r.statusText}`);
+  return r.json();
+}
+
+async function driveFindRoot() {
+  driveState.loading = true;
+  driveState.error = null;
+  driveState.stack = [];
+  refreshContent();
+  try {
+    const q = encodeURIComponent(`name='${FOLDER_ROOT_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const data = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+    if (!data.files.length) throw new Error(`No se encontró la carpeta "${FOLDER_ROOT_NAME}" en tu Drive.`);
+    const root = data.files[0];
+    driveState.rootId = root.id;
+    driveState.stack = [{ id: root.id, name: FOLDER_ROOT_NAME }];
+    await driveLoadFolder(root.id);
+  } catch(e) {
+    driveState.loading = false;
+    driveState.error = e.message;
+    refreshContent();
+  }
+}
+
+async function driveLoadFolder(folderId) {
+  driveState.loading = true;
+  driveState.error = null;
+  refreshContent();
+  try {
+    const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+    const fields = "files(id,name,mimeType,size,modifiedTime,webViewLink)";
+    const data = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=folder,name&pageSize=100`);
+    driveState.items = data.files;
+    driveState.loading = false;
+    refreshContent();
+  } catch(e) {
+    driveState.loading = false;
+    driveState.error = e.message;
+    refreshContent();
+  }
+}
+
+function driveOpenFolder(id, name) {
+  driveState.stack.push({ id, name });
+  driveState.filter = "";
+  driveLoadFolder(id);
+}
+
+function driveGoRoot() {
+  driveState.stack = [driveState.stack[0]];
+  driveState.filter = "";
+  driveLoadFolder(driveState.stack[0].id);
+}
+
+function driveGoCrumb(index) {
+  driveState.stack = driveState.stack.slice(0, index + 1);
+  driveState.filter = "";
+  driveLoadFolder(driveState.stack[driveState.stack.length-1].id);
+}
+
+async function driveOpenFile(id, mimeType) {
+  // Para archivos Google nativos, abrir webViewLink; para binarios, usar Drive viewer
+  const data = await driveFetch(`https://www.googleapis.com/drive/v3/files/${id}?fields=webViewLink`);
+  if (data.webViewLink) window.open(data.webViewLink, "_blank");
+}
+
+function driveRefresh() {
+  const current = driveState.stack[driveState.stack.length-1];
+  if (current) driveLoadFolder(current.id);
+  else driveFindRoot();
+}
+
+function driveFilter(val) {
+  driveState.filter = val;
+  refreshContent();
+}
+
+function driveSetView(v) {
+  driveState.view = v;
+  refreshContent();
+}
+
+function refreshContent() {
+  const mc = document.getElementById("main-content");
+  if (mc) mc.innerHTML = renderPage();
+}
+
+function formatSize(bytes) {
+  if (!bytes) return "";
+  const b = parseInt(bytes);
+  if (b < 1024) return b + " B";
+  if (b < 1048576) return (b/1024).toFixed(1) + " KB";
+  return (b/1048576).toFixed(1) + " MB";
+}
+
+// ─────────────────────────────────────────
+//  LOGIN
+// ─────────────────────────────────────────
+function renderLogin(app) {
+  const isRealId = !GOOGLE_CLIENT_ID.startsWith("TU_") && GOOGLE_CLIENT_ID.includes(".apps.googleusercontent.com");
+  app.innerHTML = `
+    <div class="login-screen">
+      <div class="login-box">
+        <div class="login-logo">ZV-Doc <span>360</span></div>
+        <div class="login-subtitle">Gestión documental familiar</div>
+        ${isRealId ? `<div id="googleBtn"></div>` : `<p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">Configura tu Client ID para activar Google Login.</p>`}
+        <div class="divider">${isRealId?"o":"desarrollo"}</div>
+        <button class="btn-mock" onclick="mockLogin()">🧪 Modo prueba (sin Google)</button>
+      </div>
+    </div>`;
+  if (isRealId) {
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleLogin });
+    google.accounts.id.renderButton(document.getElementById("googleBtn"), { theme:"filled_blue", size:"large", width:280 });
+  }
 }
 
 function handleLogin(response) {
-  const payload = parseJwt(response.credential);
+  const p = parseJwt(response.credential);
+  user = { name: p.name, email: p.email, picture: p.picture };
+  render();
+}
 
-  user = {
-    name: payload.name,
-    email: payload.email,
-    picture: payload.picture
-  };
-
+function mockLogin() {
+  user = { name: "ZV Prueba", email: "dev@local", picture: null };
   render();
 }
 
 function logout() {
-  user = null;
+  user = null; driveToken = null;
+  driveState = { loading:false, error:null, rootId:null, stack:[], items:[], filter:"", view:"list" };
   render();
 }
 
+function setPage(p) { page = p; render(); }
+
 function parseJwt(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  return JSON.parse(atob(base64));
+  const b64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+  return JSON.parse(atob(b64));
 }
 
 render();
 </script>
-
 </body>
 </html>
