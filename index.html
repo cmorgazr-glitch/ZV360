@@ -122,6 +122,7 @@ const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.readonly";
 const FOLDER_ROOT_NAME = "COMPARTIDA";
 
 let user = null;
+let accessStatus = null; // null | "checking" | "aprobado" | "pendiente" | "rechazado"
 let driveToken = null;
 let page = "dashboard";
 
@@ -150,7 +151,7 @@ const NAV = [
 // ─────────────────────────────────────────
 function render() {
   const app = document.getElementById("app");
-  if (!user) { renderLogin(app); return; }
+  if (!user || accessStatus !== "aprobado") { renderLogin(app); return; }
 
   const initials = user.name.split(" ").map(n=>n[0]).join("").slice(0,2).toUpperCase();
   app.innerHTML = `
@@ -449,16 +450,35 @@ function renderLogin(app) {
 function handleLogin(response) {
   const p = parseJwt(response.credential);
   user = { name: p.name, email: p.email, picture: p.picture };
+  checkAccess();
+}
+
+async function checkAccess() {
+  accessStatus = "checking";
+  render();
+  try {
+    const res = await fetch(ACCESS_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: user.email, name: user.name })
+    });
+    const data = await res.json();
+    accessStatus = data.status || "pendiente";
+  } catch(e) {
+    // Si falla el webhook, permitir acceso (evitar bloqueo por error de red)
+    accessStatus = "aprobado";
+  }
   render();
 }
 
 function mockLogin() {
   user = { name: "ZV Prueba", email: "dev@local", picture: null };
+  accessStatus = "aprobado";
   render();
 }
 
 function logout() {
-  user = null; driveToken = null;
+  user = null; accessStatus = null; driveToken = null;
   driveState = { loading:false, error:null, rootId:null, stack:[], items:[], filter:"", view:"list" };
   render();
 }
@@ -475,6 +495,7 @@ function parseJwt(token) {
 //  ASISTENTE IA
 // ─────────────────────────────────────────
 const N8N_WEBHOOK = "https://carlosmorgaz.app.n8n.cloud/webhook/zv-doc-ia";
+const ACCESS_WEBHOOK = "https://carlosmorgaz.app.n8n.cloud/webhook/zv360-acceso";
 let chatHistory = [];
 
 function renderIA() {
