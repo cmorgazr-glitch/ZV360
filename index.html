@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZV-Doc 360</title>
+  <title>ZV360</title>
   <script src="https://accounts.google.com/gsi/client" async defer onload="onGoogleReady()"></script>
   <style>
     :root {
@@ -97,6 +97,20 @@
     .view-toggle { display:flex; gap:4px; }
     .view-toggle button { padding:6px 10px; border:1px solid #334155; background:transparent; color:var(--muted); border-radius:6px; cursor:pointer; font-size:.8rem; }
     .view-toggle button.active { background:#1e3a5f; color:#93c5fd; border-color:#1e3a5f; }
+
+    /* CHAT IA */
+    .chat-wrap { display:flex; flex-direction:column; height:calc(100vh - 180px); }
+    .chat-messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:4px 0 16px; }
+    .chat-bubble { max-width:80%; padding:10px 14px; border-radius:12px; font-size:.85rem; line-height:1.5; }
+    .chat-bubble.user { background:var(--accent); color:white; align-self:flex-end; border-bottom-right-radius:4px; }
+    .chat-bubble.assistant { background:var(--card); border:1px solid #1e293b; color:var(--text); align-self:flex-start; border-bottom-left-radius:4px; }
+    .chat-bubble.typing { color:var(--muted); font-style:italic; }
+    .chat-input-row { display:flex; gap:8px; padding-top:12px; border-top:1px solid #1e293b; }
+    .chat-input-row textarea { flex:1; padding:10px 14px; background:#1e293b; border:1px solid #334155; border-radius:10px; color:var(--text); font-size:.85rem; resize:none; outline:none; font-family:inherit; }
+    .chat-input-row textarea:focus { border-color:var(--accent); }
+    .chat-send { padding:10px 16px; background:var(--accent); border:none; color:white; border-radius:10px; cursor:pointer; font-size:1rem; }
+    .chat-send:hover { background:#2563eb; }
+    .chat-send:disabled { background:#334155; cursor:not-allowed; }
   </style>
 </head>
 <body>
@@ -142,7 +156,7 @@ function render() {
   app.innerHTML = `
     <div class="app">
       <div class="sidebar">
-        <div class="sidebar-logo">ZV-Doc <span>360</span></div>
+        <div class="sidebar-logo">ZV<span>360</span></div>
         ${NAV.map(n=>`
           <button class="nav-btn ${page===n.id?'active':''}" onclick="setPage('${n.id}')">
             ${n.icon} ${n.label}
@@ -172,7 +186,7 @@ function renderPage() {
     case "personas":   return `<div class="page-header"><h2>Personas</h2><p>Miembros del núcleo familiar</p></div><div class="placeholder"><div class="ph-icon">👥</div><h3>Próximo paso</h3><p>Se cargará desde Google Sheets · hoja <strong>Contactos</strong></p></div>`;
     case "informes":   return `<div class="page-header"><h2>Informes</h2><p>Generación de resúmenes y PDFs</p></div><div class="placeholder"><div class="ph-icon">📑</div><h3>Próximo paso</h3><p>Exportar fichas por persona y vencimientos</p></div>`;
     case "buscar":     return `<div class="page-header"><h2>Buscar</h2><p>Búsqueda inteligente</p></div><div class="placeholder"><div class="ph-icon">🔎</div><h3>Próximo paso</h3><p>Búsqueda cross-sección con filtros</p></div>`;
-    case "ia":         return `<div class="page-header"><h2>Asistente IA</h2><p>Consultas sobre tu documentación</p></div><div class="placeholder"><div class="ph-icon">🤖</div><h3>Próximo paso</h3><p>Chat con Claude integrado</p></div>`;
+    case "ia":         return renderIA();
   }
 }
 
@@ -419,7 +433,7 @@ function renderLogin(app) {
   app.innerHTML = `
     <div class="login-screen">
       <div class="login-box">
-        <div class="login-logo">ZV-Doc <span>360</span></div>
+        <div class="login-logo">ZV<span>360</span></div>
         <div class="login-subtitle">Gestión documental familiar</div>
         ${isRealId ? `<div id="googleBtn"></div>` : `<p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">Configura tu Client ID para activar Google Login.</p>`}
         <div class="divider">${isRealId?"o":"desarrollo"}</div>
@@ -454,6 +468,88 @@ function setPage(p) { page = p; render(); }
 function parseJwt(token) {
   const b64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
   return JSON.parse(atob(b64));
+}
+
+
+// ─────────────────────────────────────────
+//  ASISTENTE IA
+// ─────────────────────────────────────────
+const N8N_WEBHOOK = "https://carlosmorgaz.app.n8n.cloud/webhook/zv-doc-ia";
+let chatHistory = [];
+
+function renderIA() {
+  const msgs = chatHistory.length
+    ? chatHistory.map(m => `
+        <div class="chat-bubble ${m.role}">
+          ${m.role === 'assistant' ? '🤖 ' : ''}${m.content}
+        </div>`).join("")
+    : `<div class="chat-bubble assistant">
+        👋 Hola, soy tu asistente de ZV360. Puedo ayudarte a encontrar documentos, recordarte vencimientos o resolver dudas sobre tu carpeta familiar. ¿En qué te ayudo?
+       </div>`;
+
+  return `
+    <div class="page-header">
+      <h2>Asistente IA</h2>
+      <p>Powered by Claude · Conectado a tu documentación</p>
+    </div>
+    <div class="chat-wrap">
+      <div class="chat-messages" id="chat-messages">${msgs}</div>
+      <div class="chat-input-row">
+        <textarea id="chat-input" rows="2" placeholder="Escribe tu pregunta..."
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+        <button class="chat-send" id="chat-send" onclick="sendChat()">➤</button>
+      </div>
+    </div>`;
+}
+
+async function sendChat() {
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send");
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = "";
+  input.disabled = true;
+  sendBtn.disabled = true;
+
+  chatHistory.push({ role: "user", content: msg });
+  chatHistory.push({ role: "assistant", content: "⏳ Pensando...", typing: true });
+  refreshContent();
+  scrollChat();
+
+  try {
+    const res = await fetch(N8N_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: msg,
+        context: driveState.stack.length ? driveState.stack[driveState.stack.length-1].name : "COMPARTIDA",
+        files: driveState.items.map(f => f.name).slice(0, 20).join(", ")
+      })
+    });
+
+    const data = await res.json();
+    chatHistory = chatHistory.filter(m => !m.typing);
+    chatHistory.push({ role: "assistant", content: data.reply || "Sin respuesta." });
+
+  } catch(e) {
+    chatHistory = chatHistory.filter(m => !m.typing);
+    chatHistory.push({ role: "assistant", content: "❌ Error al conectar con el asistente. Comprueba que el workflow de n8n está activo." });
+  }
+
+  refreshContent();
+  scrollChat();
+  const inp = document.getElementById("chat-input");
+  const btn = document.getElementById("chat-send");
+  if (inp) { inp.disabled = false; inp.focus(); }
+  if (btn) btn.disabled = false;
+}
+
+function scrollChat() {
+  setTimeout(() => {
+    const el = document.getElementById("chat-messages");
+    if (el) el.scrollTop = el.scrollHeight;
+  }, 50);
 }
 
 let googleReady = false;
