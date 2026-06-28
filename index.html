@@ -11,13 +11,14 @@
   --accent: #3b82f6; --danger: #ef4444; --text: #f1f5f9; --muted: #94a3b8;
   --success: #22c55e; --warning: #f59e0b;
   --sidebar-w: 220px;
+  --topbar-h: 52px;
   --bottomnav-h: 60px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
 /* ── LOGIN ── */
-.login-screen { height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 60% 40%,#1e3a5f 0%,#0f172a 70%); padding: 16px; }
+.login-screen { height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 60% 40%,#1e3a5f 0%,#0f172a 70%); padding:16px; }
 .login-box { background:var(--card); border:1px solid #334155; border-radius:16px; padding:48px 40px; text-align:center; width:360px; max-width:100%; box-shadow:0 25px 60px rgba(0,0,0,.5); }
 .login-logo { font-size:2.4rem; font-weight:800; letter-spacing:-1px; margin-bottom:6px; }
 .login-logo span { color:var(--accent); }
@@ -57,7 +58,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 
 /* ── CONTENT ── */
 .content { flex:1; overflow-y:auto; padding:28px 32px; min-width:0; }
-.page-header { margin-bottom:24px; }
+.page-header { margin-bottom:20px; }
 .page-header h2 { font-size:1.4rem; font-weight:700; letter-spacing:-.4px; }
 .page-header p { color:var(--muted); font-size:.83rem; margin-top:2px; }
 
@@ -97,7 +98,6 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 .drive-item .di-actions { display:flex; gap:6px; margin-top:4px; }
 .di-btn { font-size:.68rem; padding:3px 8px; border-radius:6px; border:none; cursor:pointer; }
 .di-btn-open { background:#1e3a5f; color:#93c5fd; }
-.di-btn-open:hover { background:#1e4a7a; }
 .drive-list { display:flex; flex-direction:column; gap:6px; }
 .drive-list-item { background:var(--card); border:1px solid #1e293b; border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .15s; }
 .drive-list-item:hover { border-color:var(--accent); }
@@ -113,135 +113,95 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 .view-toggle button { padding:6px 10px; border:1px solid #334155; background:transparent; color:var(--muted); border-radius:6px; cursor:pointer; font-size:.8rem; }
 .view-toggle button.active { background:#1e3a5f; color:#93c5fd; border-color:#1e3a5f; }
 
-/* ── CHAT IA ── */
-.chat-wrap { display:flex; flex-direction:column; height:calc(100vh - 180px); }
-.chat-messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:4px 0 16px; }
-.chat-bubble { max-width:80%; padding:10px 14px; border-radius:12px; font-size:.85rem; line-height:1.5; }
+/* ── CHAT IA — Desktop ── */
+.ia-page { display:flex; flex-direction:column; height:calc(100vh - 56px); }
+.chat-wrap { display:flex; flex-direction:column; flex:1; min-height:0; }
+.chat-messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding:4px 0 12px; }
+.chat-bubble { max-width:80%; padding:10px 14px; border-radius:12px; font-size:.85rem; line-height:1.5; word-break:break-word; }
 .chat-bubble.user { background:var(--accent); color:white; align-self:flex-end; border-bottom-right-radius:4px; }
 .chat-bubble.assistant { background:var(--card); border:1px solid #1e293b; color:var(--text); align-self:flex-start; border-bottom-left-radius:4px; }
 .chat-bubble.typing { color:var(--muted); font-style:italic; }
-.chat-input-row { display:flex; gap:8px; padding-top:12px; border-top:1px solid #1e293b; }
+.chat-input-row { display:flex; gap:8px; padding-top:12px; border-top:1px solid #1e293b; flex-shrink:0; }
 .chat-input-row textarea { flex:1; padding:10px 14px; background:#1e293b; border:1px solid #334155; border-radius:10px; color:var(--text); font-size:.85rem; resize:none; outline:none; font-family:inherit; }
 .chat-input-row textarea:focus { border-color:var(--accent); }
-.chat-send { padding:10px 16px; background:var(--accent); border:none; color:white; border-radius:10px; cursor:pointer; font-size:1rem; }
+.chat-send { padding:10px 16px; background:var(--accent); border:none; color:white; border-radius:10px; cursor:pointer; font-size:1rem; flex-shrink:0; }
 .chat-send:hover { background:#2563eb; }
 .chat-send:disabled { background:#334155; cursor:not-allowed; }
 
 /* ── MOBILE TOP BAR ── */
 .mobile-topbar {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  height: 52px;
-  background: var(--sidebar);
-  border-bottom: 1px solid #1e293b;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  flex-shrink: 0;
+  display:none; align-items:center; justify-content:space-between;
+  padding:0 16px; height:var(--topbar-h);
+  background:var(--sidebar); border-bottom:1px solid #1e293b;
+  position:sticky; top:0; z-index:200; flex-shrink:0;
 }
 .mobile-topbar-logo { font-size:1.1rem; font-weight:800; }
 .mobile-topbar-logo span { color:var(--accent); }
-.mobile-menu-btn {
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  font-size: 1.4rem;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-.mobile-menu-btn:active { background: var(--card); }
+.mobile-menu-btn { background:transparent; border:none; color:var(--muted); font-size:1.4rem; cursor:pointer; padding:4px 8px; border-radius:6px; }
 
 /* ── MOBILE BOTTOM NAV ── */
 .bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--bottomnav-h);
-  background: var(--sidebar);
-  border-top: 1px solid #1e293b;
-  z-index: 200;
-  justify-content: space-around;
-  align-items: center;
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  height:var(--bottomnav-h); background:var(--sidebar); border-top:1px solid #1e293b;
+  z-index:200; justify-content:space-around; align-items:center;
 }
 .bottom-nav-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: .6rem;
-  min-width: 48px;
-  transition: all .15s;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:transparent; border:none; color:var(--muted); cursor:pointer;
+  padding:6px 8px; border-radius:8px; font-size:.58rem; min-width:44px;
 }
-.bottom-nav-btn .bn-icon { font-size: 1.2rem; line-height:1; }
-.bottom-nav-btn.active { color: #93c5fd; }
-.bottom-nav-btn.active .bn-icon { filter: drop-shadow(0 0 4px #3b82f680); }
+.bottom-nav-btn .bn-icon { font-size:1.2rem; line-height:1; }
+.bottom-nav-btn.active { color:#93c5fd; }
 
-/* ── SIDEBAR OVERLAY (mobile drawer) ── */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  z-index: 150;
-  backdrop-filter: blur(2px);
-}
-.sidebar-overlay.open { display: block; }
+/* ── SIDEBAR OVERLAY ── */
+.sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:150; backdrop-filter:blur(2px); }
+.sidebar-overlay.open { display:block; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
-  .app { flex-direction: column; overflow: hidden; }
+  .app { flex-direction:column; overflow:hidden; }
 
-  /* Hide desktop sidebar by default, show as drawer */
   .sidebar {
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    transform: translateX(-100%);
-    z-index: 160;
-    overflow-y: auto;
-    padding-bottom: 24px;
+    position:fixed; top:0; left:0; bottom:0;
+    transform:translateX(-100%); z-index:160; overflow-y:auto; padding-bottom:24px;
   }
-  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.5); }
+  .sidebar.open { transform:translateX(0); box-shadow:4px 0 24px rgba(0,0,0,.5); }
 
-  .mobile-topbar { display: flex; }
-  .bottom-nav { display: flex; }
+  .mobile-topbar { display:flex; }
+  .bottom-nav { display:flex; }
 
-  /* Content takes full width, padded for top bar + bottom nav */
+  .app-inner { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+
+  /* Content: full width, scroll, leave room for top+bottom bars */
   .content {
-    padding: 16px;
-    padding-bottom: calc(var(--bottomnav-h) + 16px);
-    flex: 1;
-    overflow-y: auto;
-    /* account for sticky topbar */
+    padding:14px 14px;
+    flex:1;
+    overflow-y:auto;
+    /* Extra bottom padding so last card clears the bottom nav */
+    padding-bottom:calc(var(--bottomnav-h) + 14px);
   }
 
-  .app-inner { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  /* IA page: fixed height so input stays visible above bottom nav */
+  .ia-page {
+    height:calc(100dvh - var(--topbar-h) - var(--bottomnav-h) - 0px);
+    /* Compensate content padding */
+    margin:-14px;
+    padding:14px;
+    padding-bottom:0;
+  }
+  .chat-input-row {
+    padding-bottom:10px;
+  }
 
-  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .stat-card { padding: 14px 16px; }
-  .stat-card .stat-value { font-size: 1.3rem; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .stat-card { padding:14px 16px; }
+  .stat-card .stat-value { font-size:1.3rem; }
 
-  .drive-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .drive-grid { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
 
-  .chat-wrap { height: calc(100vh - 52px - var(--bottomnav-h) - 60px); }
-  .chat-bubble { max-width: 92%; }
-
-  .page-header h2 { font-size: 1.2rem; }
-
-  .drive-toolbar { gap: 8px; }
-  .drive-toolbar input { min-width: 0; }
-
-  .btn-primary, .btn-secondary { font-size: .78rem; padding: 7px 12px; }
+  .chat-bubble { max-width:92%; }
+  .page-header h2 { font-size:1.15rem; }
+  .btn-primary, .btn-secondary { font-size:.78rem; padding:7px 12px; }
 }
 </style>
 </head>
@@ -252,8 +212,25 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 const GOOGLE_CLIENT_ID = "378492890211-hi5oqlbom6ukp0en164fr662uoj48o72.apps.googleusercontent.com";
 const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.readonly";
 const FOLDER_ROOT_NAME = "COMPARTIDA";
-const N8N_WEBHOOK = "https://carlosmorgaz.app.n8n.cloud/webhook/zv-doc-ia";
+const N8N_WEBHOOK   = "https://carlosmorgaz.app.n8n.cloud/webhook/zv-doc-ia";
 const ACCESS_WEBHOOK = "https://carlosmorgaz.app.n8n.cloud/webhook/zv360-acceso";
+
+// Prompt del sistema que viaja al agente n8n → Claude
+const SYSTEM_PROMPT = `Eres el asistente documental de la familia ZV. Tu misión es encontrar datos concretos dentro de los documentos de la carpeta COMPARTIDA en Google Drive.
+
+REGLAS IMPORTANTES:
+1. Cuando te pregunten por un dato concreto (DNI, nota, fecha, número, dirección, etc.), DEBES abrir y leer el contenido de los archivos relevantes usando la herramienta de Google Drive disponible en n8n. No te limites a mirar los nombres de los archivos.
+2. Si el dato podría estar en un PDF, Word, imagen o cualquier archivo: ábrelo y lee su contenido completo.
+3. Responde SIEMPRE con el dato exacto si lo encuentras: número de DNI, nota numérica, fecha, importe, etc.
+4. Si no encuentras el dato en ningún archivo después de buscar, dilo claramente e indica en qué archivos has buscado.
+5. Para preguntas sobre personas de la familia, busca en todos los archivos relacionados con esa persona.
+6. Recuerda el contexto de la conversación: si ya encontraste un dato antes, úsalo.
+7. Sé proactivo: si la pregunta es ambigua, interpreta la intención y busca el dato más probable.
+
+Ejemplos de cómo responder:
+- "¿Cuál es mi DNI?" → Busca en documentos de identidad y responde: "Tu DNI es 12345678X"
+- "¿Qué nota sacó Hugo en Matemáticas en el 2º trimestre de 2º de Primaria?" → Busca el boletín de notas y responde: "Hugo sacó un 8 en Matemáticas en el 2º trimestre de 2º de Primaria"
+- "¿Cuándo vence el seguro del coche?" → Busca la póliza y responde con la fecha exacta`;
 
 let user = null;
 let accessStatus = null;
@@ -261,62 +238,44 @@ let driveToken = null;
 let page = "dashboard";
 let sidebarOpen = false;
 
-// ── Drive state ──
 let driveState = {
-  loading: false, error: null, rootId: null,
-  stack: [], items: [], filter: "", view: "list"
+  loading:false, error:null, rootId:null,
+  stack:[], items:[], filter:"", view:"list"
 };
 
 const NAV = [
-  { id:"dashboard",  icon:"🏠", label:"Dashboard"   },
-  { id:"personas",   icon:"👥", label:"Personas"    },
-  { id:"documentos", icon:"📂", label:"Documentos"  },
-  { id:"informes",   icon:"📑", label:"Informes"    },
-  { id:"buscar",     icon:"🔎", label:"Buscar"      },
-  { id:"ia",         icon:"🤖", label:"IA"          },
+  { id:"dashboard",  icon:"🏠", label:"Dashboard"  },
+  { id:"personas",   icon:"👥", label:"Personas"   },
+  { id:"documentos", icon:"📂", label:"Documentos" },
+  { id:"informes",   icon:"📑", label:"Informes"   },
+  { id:"buscar",     icon:"🔎", label:"Buscar"     },
+  { id:"ia",         icon:"🤖", label:"IA"         },
 ];
 
-// ── Sesión persistente ──
-function saveSession() {
-  if (user) localStorage.setItem("zv360_user", JSON.stringify(user));
-}
-function loadSession() {
+/* ── SESIÓN PERSISTENTE ── */
+function saveSession()  { if(user) localStorage.setItem("zv360_user", JSON.stringify(user)); }
+function clearSession() { localStorage.removeItem("zv360_user"); }
+function loadSession()  {
   try {
-    const saved = localStorage.getItem("zv360_user");
-    if (saved) {
-      user = JSON.parse(saved);
-      accessStatus = "aprobado";
-    }
-  } catch(e) { localStorage.removeItem("zv360_user"); }
-}
-function clearSession() {
-  localStorage.removeItem("zv360_user");
+    const s = localStorage.getItem("zv360_user");
+    if(s){ user = JSON.parse(s); accessStatus = "aprobado"; }
+  } catch(e){ localStorage.removeItem("zv360_user"); }
 }
 
-// ─────────────────────────────────────────
-// RENDER
-// ─────────────────────────────────────────
+/* ─────────────────────────────────────────
+   RENDER
+───────────────────────────────────────── */
 function render() {
   const app = document.getElementById("app");
   if (!user || accessStatus !== "aprobado") { renderLogin(app); return; }
 
   const initials = user.name.split(" ").map(n=>n[0]).join("").slice(0,2).toUpperCase();
 
-  // Bottom nav — solo las 5 primeras secciones (IA como 6ª incluida)
-  const bottomNavHTML = `
-    <div class="bottom-nav" id="bottom-nav">
-      ${NAV.map(n => `
-        <button class="bottom-nav-btn ${page===n.id?'active':''}" onclick="setPage('${n.id}')">
-          <span class="bn-icon">${n.icon}</span>${n.label}
-        </button>`).join("")}
-    </div>`;
-
   app.innerHTML = `
     <div class="sidebar-overlay ${sidebarOpen?'open':''}" onclick="closeSidebar()"></div>
 
     <div class="app">
-
-      <!-- Sidebar (desktop + mobile drawer) -->
+      <!-- Sidebar -->
       <div class="sidebar ${sidebarOpen?'open':''}" id="sidebar">
         <div class="sidebar-logo">ZV<span>360</span></div>
         ${NAV.map(n=>`
@@ -336,13 +295,12 @@ function render() {
         <button class="btn-logout" onclick="logout()">← Salir</button>
       </div>
 
-      <!-- App inner: topbar + content -->
+      <!-- App inner -->
       <div class="app-inner" style="flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;">
-
-        <!-- Mobile top bar -->
+        <!-- Mobile topbar -->
         <div class="mobile-topbar">
           <div class="mobile-topbar-logo">ZV<span>360</span></div>
-          <div style="display:flex;align-items:center;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
             <div class="user-avatar" style="width:32px;height:32px;">
               ${user.picture?`<img src="${user.picture}" alt="${initials}">`:`${initials}`}
             </div>
@@ -350,15 +308,20 @@ function render() {
           </div>
         </div>
 
-        <!-- Main content -->
+        <!-- Content -->
         <div class="content" id="main-content">
           ${renderPage()}
         </div>
-
       </div>
     </div>
 
-    ${bottomNavHTML}`;
+    <!-- Bottom nav mobile -->
+    <div class="bottom-nav">
+      ${NAV.map(n=>`
+        <button class="bottom-nav-btn ${page===n.id?'active':''}" onclick="setPage('${n.id}')">
+          <span class="bn-icon">${n.icon}</span>${n.label}
+        </button>`).join("")}
+    </div>`;
 }
 
 function renderPage() {
@@ -372,15 +335,12 @@ function renderPage() {
   }
 }
 
-// ─────────────────────────────────────────
-// SIDEBAR MOBILE
-// ─────────────────────────────────────────
 function toggleSidebar() { sidebarOpen = !sidebarOpen; render(); }
 function closeSidebar()  { sidebarOpen = false; render(); }
 
-// ─────────────────────────────────────────
-// DASHBOARD
-// ─────────────────────────────────────────
+/* ─────────────────────────────────────────
+   DASHBOARD
+───────────────────────────────────────── */
 function renderDashboard() {
   return `
     <div class="page-header"><h2>Dashboard</h2><p>Resumen de la documentación familiar</p></div>
@@ -402,24 +362,19 @@ function renderDashboard() {
     </div>`;
 }
 
-// ─────────────────────────────────────────
-// DOCUMENTOS — Drive
-// ─────────────────────────────────────────
+/* ─────────────────────────────────────────
+   DOCUMENTOS — Drive
+───────────────────────────────────────── */
 function renderDocumentos() {
   const ds = driveState;
-
   const crumb = `
     <div class="breadcrumb">
       <span onclick="driveGoRoot()">📂 ${FOLDER_ROOT_NAME}</span>
-      ${ds.stack.slice(1).map((f,i)=>`
-        <span class="sep">›</span>
-        <span onclick="driveGoCrumb(${i+1})">${f.name}</span>`).join("")}
+      ${ds.stack.slice(1).map((f,i)=>`<span class="sep">›</span><span onclick="driveGoCrumb(${i+1})">${f.name}</span>`).join("")}
     </div>`;
-
   const toolbar = `
     <div class="drive-toolbar">
-      <input type="text" placeholder="Filtrar archivos..." value="${ds.filter}"
-        oninput="driveFilter(this.value)" id="drive-search"/>
+      <input type="text" placeholder="Filtrar archivos..." value="${ds.filter}" oninput="driveFilter(this.value)"/>
       ${!driveToken
         ? `<button class="btn-primary" onclick="requestDriveAccess()">🔗 Conectar Drive</button>`
         : `<button class="btn-secondary" onclick="driveRefresh()">↻</button>`}
@@ -428,279 +383,226 @@ function renderDocumentos() {
         <button class="${ds.view==='grid'?'active':''}" onclick="driveSetView('grid')">⊞</button>
       </div>
     </div>`;
-
   let content = "";
-  if (!driveToken) {
-    content = `<div class="placeholder">
-      <div class="ph-icon">📂</div>
-      <h3>Conecta Google Drive</h3>
-      <p>Toca "Conectar Drive" para acceder a la carpeta <strong>COMPARTIDA</strong></p>
-    </div>`;
-  } else if (ds.loading) {
-    content = `<div class="drive-loading">⏳ Cargando archivos...</div>`;
-  } else if (ds.error) {
-    content = `<div class="drive-error">❌ ${ds.error}<br><br><button class="btn-secondary" onclick="driveRefresh()">Reintentar</button></div>`;
+  if(!driveToken){
+    content=`<div class="placeholder"><div class="ph-icon">📂</div><h3>Conecta Google Drive</h3><p>Toca "Conectar Drive" para acceder a la carpeta <strong>COMPARTIDA</strong></p></div>`;
+  } else if(ds.loading){
+    content=`<div class="drive-loading">⏳ Cargando archivos...</div>`;
+  } else if(ds.error){
+    content=`<div class="drive-error">❌ ${ds.error}<br><br><button class="btn-secondary" onclick="driveRefresh()">Reintentar</button></div>`;
   } else {
-    const filtered = ds.items.filter(f => f.name.toLowerCase().includes(ds.filter.toLowerCase()));
-    if (!filtered.length) {
-      content = `<div class="placeholder"><div class="ph-icon">🗂️</div><h3>Sin resultados</h3><p>${ds.filter?"Prueba con otro término":"Esta carpeta está vacía"}</p></div>`;
-    } else if (ds.view === "grid") {
-      content = `<div class="drive-grid">${filtered.map(f=>driveItemGrid(f)).join("")}</div>`;
+    const filtered=ds.items.filter(f=>f.name.toLowerCase().includes(ds.filter.toLowerCase()));
+    if(!filtered.length){
+      content=`<div class="placeholder"><div class="ph-icon">🗂️</div><h3>Sin resultados</h3><p>${ds.filter?"Prueba con otro término":"Esta carpeta está vacía"}</p></div>`;
+    } else if(ds.view==="grid"){
+      content=`<div class="drive-grid">${filtered.map(f=>driveItemGrid(f)).join("")}</div>`;
     } else {
-      content = `<div class="drive-list">${filtered.map(f=>driveItemList(f)).join("")}</div>`;
+      content=`<div class="drive-list">${filtered.map(f=>driveItemList(f)).join("")}</div>`;
     }
   }
-
   return `
-    <div class="page-header">
-      <h2>Documentos</h2>
-      <p>Carpeta <strong>COMPARTIDA</strong> en Google Drive</p>
-    </div>
-    ${toolbar}
-    ${driveToken ? crumb : ""}
-    ${content}`;
+    <div class="page-header"><h2>Documentos</h2><p>Carpeta <strong>COMPARTIDA</strong> en Google Drive</p></div>
+    ${toolbar}${driveToken?crumb:""}${content}`;
 }
 
-function driveIcon(mimeType, name) {
-  if (mimeType === "application/vnd.google-apps.folder") return "📁";
-  if (mimeType === "application/pdf") return "📄";
-  if (mimeType?.includes("image")) return "🖼️";
-  if (mimeType?.includes("spreadsheet") || name?.endsWith(".xlsx") || name?.endsWith(".csv")) return "📊";
-  if (mimeType?.includes("document") || name?.endsWith(".docx")) return "📝";
-  if (mimeType?.includes("presentation") || name?.endsWith(".pptx")) return "📑";
+function driveIcon(m,n){
+  if(m==="application/vnd.google-apps.folder") return "📁";
+  if(m==="application/pdf") return "📄";
+  if(m?.includes("image")) return "🖼️";
+  if(m?.includes("spreadsheet")||n?.endsWith(".xlsx")||n?.endsWith(".csv")) return "📊";
+  if(m?.includes("document")||n?.endsWith(".docx")) return "📝";
+  if(m?.includes("presentation")||n?.endsWith(".pptx")) return "📑";
   return "📎";
 }
-
-function driveItemGrid(f) {
-  const icon = driveIcon(f.mimeType, f.name);
-  const isFolder = f.mimeType === "application/vnd.google-apps.folder";
-  return `<div class="drive-item" onclick="${isFolder?`driveOpenFolder('${f.id}','${f.name.replace(/'/g,"\\'")}')` :`driveOpenFile('${f.id}','${f.mimeType}')`}">
-    <div class="di-icon">${icon}</div>
-    <div class="di-name">${f.name}</div>
-    <div class="di-meta">${isFolder?"Carpeta":(f.size?formatSize(f.size):"")}</div>
-    ${!isFolder?`<div class="di-actions"><button class="di-btn di-btn-open" onclick="event.stopPropagation();driveOpenFile('${f.id}','${f.mimeType}')">Abrir ↗</button></div>`:""}
+function driveItemGrid(f){
+  const icon=driveIcon(f.mimeType,f.name);
+  const isF=f.mimeType==="application/vnd.google-apps.folder";
+  return `<div class="drive-item" onclick="${isF?`driveOpenFolder('${f.id}','${f.name.replace(/'/g,"\\'")}')` :`driveOpenFile('${f.id}','${f.mimeType}')`}">
+    <div class="di-icon">${icon}</div><div class="di-name">${f.name}</div>
+    <div class="di-meta">${isF?"Carpeta":(f.size?formatSize(f.size):"")}</div>
+    ${!isF?`<div class="di-actions"><button class="di-btn di-btn-open" onclick="event.stopPropagation();driveOpenFile('${f.id}','${f.mimeType}')">Abrir ↗</button></div>`:""}
   </div>`;
 }
-
-function driveItemList(f) {
-  const icon = driveIcon(f.mimeType, f.name);
-  const isFolder = f.mimeType === "application/vnd.google-apps.folder";
-  const date = f.modifiedTime ? new Date(f.modifiedTime).toLocaleDateString("es-ES") : "";
-  return `<div class="drive-list-item" onclick="${isFolder?`driveOpenFolder('${f.id}','${f.name.replace(/'/g,"\\'")}')` :`driveOpenFile('${f.id}','${f.mimeType}')`}">
+function driveItemList(f){
+  const icon=driveIcon(f.mimeType,f.name);
+  const isF=f.mimeType==="application/vnd.google-apps.folder";
+  const date=f.modifiedTime?new Date(f.modifiedTime).toLocaleDateString("es-ES"):"";
+  return `<div class="drive-list-item" onclick="${isF?`driveOpenFolder('${f.id}','${f.name.replace(/'/g,"\\'")}')` :`driveOpenFile('${f.id}','${f.mimeType}')`}">
     <div class="dli-icon">${icon}</div>
-    <div class="dli-info">
-      <div class="dli-name">${f.name}</div>
-      <div class="dli-meta">${isFolder?"Carpeta":""}${date?" · "+date:""}${f.size?" · "+formatSize(f.size):""}</div>
-    </div>
-    ${!isFolder?`<button class="dli-open" onclick="event.stopPropagation();driveOpenFile('${f.id}','${f.mimeType}')">Abrir ↗</button>`:""}
+    <div class="dli-info"><div class="dli-name">${f.name}</div>
+    <div class="dli-meta">${isF?"Carpeta":""}${date?" · "+date:""}${f.size?" · "+formatSize(f.size):""}</div></div>
+    ${!isF?`<button class="dli-open" onclick="event.stopPropagation();driveOpenFile('${f.id}','${f.mimeType}')">Abrir ↗</button>`:""}
   </div>`;
 }
 
-// ─────────────────────────────────────────
-// DRIVE API
-// ─────────────────────────────────────────
-function requestDriveAccess() {
-  const client = google.accounts.oauth2.initTokenClient({
-    client_id: GOOGLE_CLIENT_ID,
-    scope: DRIVE_SCOPE,
-    callback: async (resp) => {
-      if (resp.error) { alert("Error al conectar Drive: " + resp.error); return; }
-      driveToken = resp.access_token;
-      await driveFindRoot();
+/* ── Drive API ── */
+function requestDriveAccess(){
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID, scope:DRIVE_SCOPE,
+    callback:async(resp)=>{
+      if(resp.error){alert("Error Drive: "+resp.error);return;}
+      driveToken=resp.access_token; await driveFindRoot();
     }
   });
   client.requestAccessToken();
 }
-
-async function driveFetch(url) {
-  const r = await fetch(url, { headers: { Authorization: "Bearer " + driveToken } });
-  if (!r.ok) throw new Error(`Error ${r.status}: ${r.statusText}`);
+async function driveFetch(url){
+  const r=await fetch(url,{headers:{Authorization:"Bearer "+driveToken}});
+  if(!r.ok) throw new Error(`Error ${r.status}: ${r.statusText}`);
   return r.json();
 }
-
-async function driveFindRoot() {
-  driveState.loading = true; driveState.error = null; driveState.stack = [];
-  refreshContent();
-  try {
-    const q = encodeURIComponent(`name='${FOLDER_ROOT_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
-    const data = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
-    if (!data.files.length) throw new Error(`No se encontró la carpeta "${FOLDER_ROOT_NAME}" en tu Drive.`);
-    const root = data.files[0];
-    driveState.rootId = root.id;
-    driveState.stack = [{ id: root.id, name: FOLDER_ROOT_NAME }];
+async function driveFindRoot(){
+  driveState.loading=true;driveState.error=null;driveState.stack=[];refreshContent();
+  try{
+    const q=encodeURIComponent(`name='${FOLDER_ROOT_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+    const data=await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+    if(!data.files.length) throw new Error(`No se encontró la carpeta "${FOLDER_ROOT_NAME}"`);
+    const root=data.files[0];
+    driveState.rootId=root.id; driveState.stack=[{id:root.id,name:FOLDER_ROOT_NAME}];
     await driveLoadFolder(root.id);
-  } catch(e) {
-    driveState.loading = false; driveState.error = e.message; refreshContent();
+  }catch(e){driveState.loading=false;driveState.error=e.message;refreshContent();}
+}
+async function driveLoadFolder(folderId){
+  driveState.loading=true;driveState.error=null;refreshContent();
+  try{
+    const q=encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+    const fields="files(id,name,mimeType,size,modifiedTime,webViewLink)";
+    const data=await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=folder,name&pageSize=100`);
+    driveState.items=data.files; driveState.loading=false; refreshContent();
+  }catch(e){driveState.loading=false;driveState.error=e.message;refreshContent();}
+}
+function driveOpenFolder(id,name){driveState.stack.push({id,name});driveState.filter="";driveLoadFolder(id);}
+function driveGoRoot(){driveState.stack=[driveState.stack[0]];driveState.filter="";driveLoadFolder(driveState.stack[0].id);}
+function driveGoCrumb(i){driveState.stack=driveState.stack.slice(0,i+1);driveState.filter="";driveLoadFolder(driveState.stack[driveState.stack.length-1].id);}
+async function driveOpenFile(id,mimeType){
+  const data=await driveFetch(`https://www.googleapis.com/drive/v3/files/${id}?fields=webViewLink`);
+  if(data.webViewLink) window.open(data.webViewLink,"_blank");
+}
+function driveRefresh(){const c=driveState.stack[driveState.stack.length-1];if(c)driveLoadFolder(c.id);else driveFindRoot();}
+function driveFilter(val){driveState.filter=val;refreshContent();}
+function driveSetView(v){driveState.view=v;refreshContent();}
+function refreshContent(){const mc=document.getElementById("main-content");if(mc)mc.innerHTML=renderPage();}
+function formatSize(b){if(!b)return"";const n=parseInt(b);if(n<1024)return n+" B";if(n<1048576)return(n/1024).toFixed(1)+" KB";return(n/1048576).toFixed(1)+" MB";}
+
+/* ─────────────────────────────────────────
+   LOGIN
+───────────────────────────────────────── */
+function renderLogin(app){
+  const isReal=!GOOGLE_CLIENT_ID.startsWith("TU_")&&GOOGLE_CLIENT_ID.includes(".apps.googleusercontent.com");
+  app.innerHTML=`
+    <div class="login-screen"><div class="login-box">
+      <div class="login-logo">ZV<span>360</span></div>
+      <div class="login-subtitle">Gestión documental familiar</div>
+      ${isReal?`<div id="googleBtn"></div>`:`<p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">Configura tu Client ID.</p>`}
+      <div class="divider">${isReal?"o":"desarrollo"}</div>
+      <button class="btn-mock" onclick="mockLogin()">🧪 Modo prueba (sin Google)</button>
+    </div></div>`;
+  if(isReal&&googleReady){
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleLogin});
+    google.accounts.id.renderButton(document.getElementById("googleBtn"),{theme:"filled_blue",size:"large",width:280});
   }
 }
 
-async function driveLoadFolder(folderId) {
-  driveState.loading = true; driveState.error = null; refreshContent();
-  try {
-    const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
-    const fields = "files(id,name,mimeType,size,modifiedTime,webViewLink)";
-    const data = await driveFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=folder,name&pageSize=100`);
-    driveState.items = data.files;
-    driveState.loading = false;
-    refreshContent();
-  } catch(e) {
-    driveState.loading = false; driveState.error = e.message; refreshContent();
-  }
+function handleLogin(response){
+  const p=parseJwt(response.credential);
+  user={name:p.name,email:p.email,picture:p.picture};
+  saveSession(); checkAccess();
 }
-
-function driveOpenFolder(id, name) { driveState.stack.push({id,name}); driveState.filter=""; driveLoadFolder(id); }
-function driveGoRoot() { driveState.stack=[driveState.stack[0]]; driveState.filter=""; driveLoadFolder(driveState.stack[0].id); }
-function driveGoCrumb(index) { driveState.stack=driveState.stack.slice(0,index+1); driveState.filter=""; driveLoadFolder(driveState.stack[driveState.stack.length-1].id); }
-async function driveOpenFile(id, mimeType) {
-  const data = await driveFetch(`https://www.googleapis.com/drive/v3/files/${id}?fields=webViewLink`);
-  if (data.webViewLink) window.open(data.webViewLink, "_blank");
-}
-function driveRefresh() { const c=driveState.stack[driveState.stack.length-1]; if(c) driveLoadFolder(c.id); else driveFindRoot(); }
-function driveFilter(val) { driveState.filter=val; refreshContent(); }
-function driveSetView(v) { driveState.view=v; refreshContent(); }
-function refreshContent() { const mc=document.getElementById("main-content"); if(mc) mc.innerHTML=renderPage(); }
-function formatSize(bytes) { if(!bytes) return ""; const b=parseInt(bytes); if(b<1024) return b+" B"; if(b<1048576) return (b/1024).toFixed(1)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
-
-// ─────────────────────────────────────────
-// LOGIN
-// ─────────────────────────────────────────
-function renderLogin(app) {
-  const isRealId = !GOOGLE_CLIENT_ID.startsWith("TU_") && GOOGLE_CLIENT_ID.includes(".apps.googleusercontent.com");
-  app.innerHTML = `
-    <div class="login-screen">
-      <div class="login-box">
-        <div class="login-logo">ZV<span>360</span></div>
-        <div class="login-subtitle">Gestión documental familiar</div>
-        ${isRealId ? `<div id="googleBtn"></div>` : `<p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">Configura tu Client ID para activar Google Login.</p>`}
-        <div class="divider">${isRealId?"o":"desarrollo"}</div>
-        <button class="btn-mock" onclick="mockLogin()">🧪 Modo prueba (sin Google)</button>
-      </div>
-    </div>`;
-  if (isRealId && googleReady) {
-    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleLogin });
-    google.accounts.id.renderButton(document.getElementById("googleBtn"), { theme:"filled_blue", size:"large", width:280 });
-  }
-}
-
-function handleLogin(response) {
-  const p = parseJwt(response.credential);
-  user = { name: p.name, email: p.email, picture: p.picture };
-  saveSession();
-  checkAccess();
-}
-
-async function checkAccess() {
-  accessStatus = "checking";
-  render();
-  try {
-    const res = await fetch(ACCESS_WEBHOOK, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: user.email, name: user.name })
-    });
-    const data = await res.json();
-    accessStatus = data.status || "pendiente";
-  } catch(e) {
-    // Si falla el webhook, permitir acceso
-    accessStatus = "aprobado";
-  }
+async function checkAccess(){
+  accessStatus="checking"; render();
+  try{
+    const res=await fetch(ACCESS_WEBHOOK,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:user.email,name:user.name})});
+    const data=await res.json();
+    accessStatus=data.status||"pendiente";
+  }catch(e){ accessStatus="aprobado"; }
   render();
 }
-
-function mockLogin() {
-  user = { name: "ZV Prueba", email: "dev@local", picture: null };
-  accessStatus = "aprobado";
-  saveSession();
+function mockLogin(){
+  user={name:"ZV Prueba",email:"dev@local",picture:null};
+  accessStatus="aprobado"; saveSession(); render();
+}
+function logout(){
+  clearSession(); user=null; accessStatus=null; driveToken=null; sidebarOpen=false;
+  driveState={loading:false,error:null,rootId:null,stack:[],items:[],filter:"",view:"list"};
   render();
 }
-
-function logout() {
-  clearSession();
-  user = null; accessStatus = null; driveToken = null; sidebarOpen = false;
-  driveState = { loading:false, error:null, rootId:null, stack:[], items:[], filter:"", view:"list" };
-  render();
-}
-
-function setPage(p) { page = p; sidebarOpen = false; render(); }
-function parseJwt(token) {
-  const b64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+function setPage(p){page=p;sidebarOpen=false;render();}
+function parseJwt(token){
+  const b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
   return JSON.parse(atob(b64));
 }
 
-// ─────────────────────────────────────────
-// ASISTENTE IA
-// ─────────────────────────────────────────
+/* ─────────────────────────────────────────
+   ASISTENTE IA
+───────────────────────────────────────── */
 let chatHistory = [];
 
-function renderIA() {
+function renderIA(){
   const msgs = chatHistory.length
-    ? chatHistory.map(m => `
-        <div class="chat-bubble ${m.role}">
-          ${m.role==='assistant'?'🤖 ':''}${m.content}
-        </div>`).join("")
-    : `<div class="chat-bubble assistant">
-        👋 Hola, soy tu asistente de ZV360. Puedo ayudarte a encontrar documentos, recordarte vencimientos o resolver dudas sobre tu carpeta familiar. ¿En qué te ayudo?
-       </div>`;
+    ? chatHistory.map(m=>`<div class="chat-bubble ${m.role}">${m.role==='assistant'?'🤖 ':''}${m.content}</div>`).join("")
+    : `<div class="chat-bubble assistant">👋 Hola, soy tu asistente ZV360. Pregúntame cualquier dato de tus documentos: DNIs, notas escolares, fechas de vencimiento, importes... Busco dentro de los archivos y te doy el dato exacto.</div>`;
 
   return `
-    <div class="page-header">
-      <h2>Asistente IA</h2>
-      <p>Powered by Claude · Conectado a tu documentación</p>
-    </div>
-    <div class="chat-wrap">
-      <div class="chat-messages" id="chat-messages">${msgs}</div>
-      <div class="chat-input-row">
-        <textarea id="chat-input" rows="2" placeholder="Escribe tu pregunta..."
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
-        <button class="chat-send" id="chat-send" onclick="sendChat()">➤</button>
+    <div class="ia-page">
+      <div class="page-header"><h2>Asistente IA</h2></div>
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages">${msgs}</div>
+        <div class="chat-input-row">
+          <textarea id="chat-input" rows="2" placeholder="Pregunta algo sobre tus documentos..."
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+          <button class="chat-send" id="chat-send" onclick="sendChat()">➤</button>
+        </div>
       </div>
     </div>`;
 }
 
-async function sendChat() {
-  const input = document.getElementById("chat-input");
-  const sendBtn = document.getElementById("chat-send");
-  const msg = input.value.trim();
-  if (!msg) return;
-  input.value = ""; input.disabled = true; sendBtn.disabled = true;
-  chatHistory.push({ role:"user", content:msg });
-  chatHistory.push({ role:"assistant", content:"⏳ Pensando...", typing:true });
+async function sendChat(){
+  const input=document.getElementById("chat-input");
+  const sendBtn=document.getElementById("chat-send");
+  const msg=input.value.trim();
+  if(!msg) return;
+  input.value=""; input.disabled=true; sendBtn.disabled=true;
+  chatHistory.push({role:"user",content:msg});
+  chatHistory.push({role:"assistant",content:"⏳ Buscando en tus documentos...",typing:true});
   refreshContent(); scrollChat();
-  try {
-    const res = await fetch(N8N_WEBHOOK, {
+  try{
+    const res=await fetch(N8N_WEBHOOK,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
+      body:JSON.stringify({
+        systemPrompt: SYSTEM_PROMPT,
         message: msg,
-        context: driveState.stack.length ? driveState.stack[driveState.stack.length-1].name : "COMPARTIDA",
-        files: driveState.items.map(f=>f.name).slice(0,20).join(", "),
-        filesDetailed: driveState.items.slice(0,20).map(f=>({
+        history: chatHistory.filter(m=>!m.typing).slice(-10).map(m=>({role:m.role,content:m.content})),
+        currentFolder: driveState.stack.length?driveState.stack[driveState.stack.length-1].name:"COMPARTIDA",
+        files: driveState.items.map(f=>f.name).slice(0,30).join(", "),
+        filesDetailed: driveState.items.slice(0,30).map(f=>({
           id:f.id, name:f.name, mimeType:f.mimeType, webViewLink:f.webViewLink||null
-        }))
+        })),
+        rootFolderId: driveState.rootId || null
       })
     });
-    const data = await res.json();
-    chatHistory = chatHistory.filter(m=>!m.typing);
-    chatHistory.push({ role:"assistant", content:data.reply||"Sin respuesta." });
-  } catch(e) {
-    chatHistory = chatHistory.filter(m=>!m.typing);
-    chatHistory.push({ role:"assistant", content:"❌ Error al conectar con el asistente. Comprueba que el workflow de n8n está activo." });
+    const data=await res.json();
+    chatHistory=chatHistory.filter(m=>!m.typing);
+    chatHistory.push({role:"assistant",content:data.reply||"Sin respuesta."});
+  }catch(e){
+    chatHistory=chatHistory.filter(m=>!m.typing);
+    chatHistory.push({role:"assistant",content:"❌ Error al conectar con el asistente. Comprueba que el workflow de n8n está activo."});
   }
   refreshContent(); scrollChat();
-  const inp = document.getElementById("chat-input");
-  const btn = document.getElementById("chat-send");
-  if(inp){ inp.disabled=false; inp.focus(); }
+  const inp=document.getElementById("chat-input");
+  const btn=document.getElementById("chat-send");
+  if(inp){inp.disabled=false;inp.focus();}
   if(btn) btn.disabled=false;
 }
 
-function scrollChat() {
-  setTimeout(()=>{ const el=document.getElementById("chat-messages"); if(el) el.scrollTop=el.scrollHeight; },50);
+function scrollChat(){
+  setTimeout(()=>{const el=document.getElementById("chat-messages");if(el)el.scrollTop=el.scrollHeight;},50);
 }
 
-let googleReady = false;
-function onGoogleReady() { googleReady=true; if(!user) render(); }
+let googleReady=false;
+function onGoogleReady(){googleReady=true;if(!user)render();}
 
-// ── INIT ──
+/* ── INIT ── */
 loadSession();
 render();
 </script>
